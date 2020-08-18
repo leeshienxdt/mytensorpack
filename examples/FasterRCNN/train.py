@@ -2,6 +2,7 @@
 # File: train.py
 
 import argparse
+import os
 
 from tensorpack import *
 from tensorpack.tfutils import collect_env_info
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     # "spawn/forkserver" is safer than the default "fork" method and
     # produce more deterministic behavior & memory saving
     # However its limitation is you cannot pass a lambda function to subprocesses.
+    os.environ['PYTHONPATH'] += ":/tensorpack"
     import multiprocessing as mp
     mp.set_start_method('spawn')
     parser = argparse.ArgumentParser()
