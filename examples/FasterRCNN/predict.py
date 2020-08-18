@@ -15,7 +15,7 @@ from tensorpack.tfutils import SmartInit, get_tf_version_tuple
 from tensorpack.tfutils.export import ModelExporter
 from tensorpack.utils import fs, logger
 
-from dataset import DatasetRegistry, register_coco, register_balloon
+from dataset import DatasetRegistry, register_coco, register_ic
 from config import config as cfg
 from config import finalize_configs
 from data import get_eval_dataflow, get_train_dataflow
@@ -103,7 +103,7 @@ def do_predict(pred_func, input_file):
     viz = np.concatenate((img, final), axis=1)
     cv2.imwrite("output.png", viz)
     logger.info("Inference output for {} written to output.png".format(input_file))
-    tpviz.interactive_imshow(viz)
+#     tpviz.interactive_imshow(viz)
 
 
 if __name__ == '__main__':
@@ -119,12 +119,13 @@ if __name__ == '__main__':
                         nargs='+')
     parser.add_argument('--output-pb', help='Save a model to .pb')
     parser.add_argument('--output-serving', help='Save a model to serving file')
+    parser.add_argument('--output-inference', help='Path to save inference results')
 
     args = parser.parse_args()
     if args.config:
         cfg.update_args(args.config)
     register_coco(cfg.DATA.BASEDIR)  # add COCO datasets to the registry
-    register_balloon(cfg.DATA.BASEDIR)
+    register_ic(cfg.DATA.BASEDIR)
 
     MODEL = ResNetFPNModel() if cfg.MODE_FPN else ResNetC4Model()
 
@@ -154,8 +155,13 @@ if __name__ == '__main__':
 
         if args.predict:
             predictor = OfflinePredictor(predcfg)
-            for image_file in args.predict:
-                do_predict(predictor, image_file)
+            outpath = args.output_inference
+            if not os.path.exists(outpath):
+                os.makedirs(outpath)            
+            files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
+            imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg')]
+            for i,image_file in enumerate(imgfiles):
+                do_predict(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
             assert args.evaluate.endswith('.json'), args.evaluate
             do_evaluate(predcfg, args.evaluate)
