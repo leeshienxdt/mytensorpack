@@ -216,7 +216,7 @@ class EvalCallback(Callback):
 
     _chief_only = False
 
-    def __init__(self, eval_dataset, in_names, out_names, output_dir):
+    def __init__(self, eval_dataset, output_dir, in_names, out_names):
         self._eval_dataset = eval_dataset
         self._in_names, self._out_names = in_names, out_names
         self._output_dir = output_dir
