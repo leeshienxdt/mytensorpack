@@ -84,6 +84,7 @@ def register_ic(basedir):
         name = "ic_" + split
         DatasetRegistry.register(name, lambda x=split: ICDemo(basedir, x))
         DatasetRegistry.register_metadata(name, "class_names", ["BG", "IC"])
+        print(DatasetRegistry._metadata_registry)
 
 if __name__ == '__main__':
     basedir = '~/data/ic'
