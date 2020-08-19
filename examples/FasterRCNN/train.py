@@ -7,7 +7,7 @@ import os
 from tensorpack import *
 from tensorpack.tfutils import collect_env_info
 
-from dataset import register_coco, register_balloon
+from dataset import register_coco, register_ic
 from config import config as cfg
 from config import finalize_configs
 from data import get_train_dataflow
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if args.config:
         cfg.update_args(args.config)
     register_coco(cfg.DATA.BASEDIR)  # add COCO datasets to the registry
-    register_balloon(cfg.DATA.BASEDIR)  # add the demo balloon datasets to the registry
+    register_ic(cfg.DATA.BASEDIR)  # add the demo balloon datasets to the registry
 
     # Setup logging ...
     is_horovod = cfg.TRAINER == 'horovod'
