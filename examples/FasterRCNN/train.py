@@ -96,7 +96,7 @@ if __name__ == '__main__':
     print('cfg.TRAIN.EVAL_PERIOD: ', cfg.TRAIN.EVAL_PERIOD)
     if cfg.TRAIN.EVAL_PERIOD > 0:
         callbacks.extend([
-            EvalCallback(dataset, *MODEL.get_inference_tensor_names(), args.logdir)
+            EvalCallback(dataset, args.logdir, *MODEL.get_inference_tensor_names())
             for dataset in cfg.DATA.VAL
         ])
 
