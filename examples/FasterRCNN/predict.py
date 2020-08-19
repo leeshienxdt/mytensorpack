@@ -108,9 +108,13 @@ def do_predict(pred_func, input_file, output_file):
     kernel = np.ones((3,3), np.uint8) 
     erode = cv2.erode(binary, kernel)
     edge = binary - erode
+    idx_r, idx_c = np.where(edge==1)
+    idx1 = np.stack((idx_r, idx_c), axis=1)
+    edge3d = np.zeros(edge.shape)
+    edge3d = edge[list(idx1.T)] = 1
 #     cv2.imwrite(edge_outpath, edge)
     
-    viz = np.concatenate((img, final, edge), axis=1)
+    viz = np.concatenate((img, final, edge3d), axis=1)
     cv2.imwrite(output_file, viz)
     logger.info("Inference output for {} written to output.png".format(output_file))
 #     tpviz.interactive_imshow(viz)
