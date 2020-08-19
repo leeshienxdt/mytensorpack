@@ -110,7 +110,10 @@ def do_predict(pred_func, input_file, output_file):
     edge = binary - erode
     idx_r, idx_c = np.where(edge==1)
     idx1 = np.stack((idx_r, idx_c), axis=1)
-    edge3d = np.zeros(edge.shape)
+    edge3d = np.zeros((edge.shape[0], edge.shape[1]))
+    print('idx1: ', idx1)
+    print('edge.shape: ', edge.shape)
+    print('edge3d.shape: ', edge3d.shape)
     edge3d[list(idx1.T)] = 1
 #     cv2.imwrite(edge_outpath, edge)
     
