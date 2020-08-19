@@ -104,7 +104,7 @@ def do_predict(pred_func, input_file, output_file):
 #     edge_outpath = '/'.join(output_file.split('/')[:-1])+'2/'+output_file.split('/')[-1]
 #     if not os.path.exists(edge_outpath):
 #         os.makedirs(edge_outpath)         
-    binary = results[0].mask*255
+    binary = results[0][3]*255
     kernel = np.ones((3,3), np.uint8) 
     erode = cv2.erode(binary, kernel)
     edge = binary - erode
