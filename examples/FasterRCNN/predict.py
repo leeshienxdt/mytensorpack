@@ -93,7 +93,7 @@ def do_evaluate(pred_config, output_file):
         DatasetRegistry.get(dataset).eval_inference_results(all_results, output)
 
 
-def do_predict(pred_func, input_file):
+def do_predict(pred_func, input_file, output_file):
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
     results = predict_image(img, pred_func)
     if cfg.MODE_MASK:
