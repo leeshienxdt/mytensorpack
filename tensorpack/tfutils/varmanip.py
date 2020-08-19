@@ -234,7 +234,7 @@ def get_all_checkpoints(dir: str, prefix: str = "model"):
     def step_from_filename(name):
         name = os.path.basename(name)
         print('name 1: ', name)
-        name = name[len(f"{prefix}-"):-len(".index")]
+        name = name[len(prefix+"-"):-len(".index")]
         print('name 2: ', name)
         return int(name)
 
