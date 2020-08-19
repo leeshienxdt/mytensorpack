@@ -104,11 +104,11 @@ def do_predict(pred_func, input_file, output_file):
 #     edge_outpath = '/'.join(output_file.split('/')[:-1])+'2/'+output_file.split('/')[-1]
 #     if not os.path.exists(edge_outpath):
 #         os.makedirs(edge_outpath)         
-    binary = results[0][3]*255
+    binary = results[0].mask*255
     kernel = np.ones((3,3), np.uint8) 
     erode = cv2.erode(binary, kernel)
     edge = binary - erode
-    idx_r, idx_c = np.where(edge==1)
+    idx_r, idx_c = np.where(edge==255)
     idx1 = np.stack((idx_r, idx_c), axis=1)
     edge3d = np.zeros((edge.shape[0], edge.shape[1]))
     print('idx1: ', idx1)
