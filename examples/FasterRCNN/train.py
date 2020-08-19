@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # File: train.py
 
+print('We are inside train.py')
 import argparse
 import os
 
 from tensorpack import *
 from tensorpack.tfutils import collect_env_info
+print('We have imported Tensorpack package')
 
 from dataset import register_coco, register_ic
 from config import config as cfg
