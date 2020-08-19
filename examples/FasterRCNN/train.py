@@ -93,6 +93,7 @@ if __name__ == '__main__':
         SessionRunTimeout(600000),   # 10 minute timeout
         GPUUtilizationTracker()
     ]
+    print('cfg.TRAIN.EVAL_PERIOD: ', cfg.TRAIN.EVAL_PERIOD)
     if cfg.TRAIN.EVAL_PERIOD > 0:
         callbacks.extend([
             EvalCallback(dataset, *MODEL.get_inference_tensor_names(), args.logdir)
