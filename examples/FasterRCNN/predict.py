@@ -101,16 +101,16 @@ def do_predict(pred_func, input_file, output_file):
     else:
         final = draw_final_outputs(img, results)
 
-    edge_outpath = '/'.join(output_file.split('/')[:-1])+'2/'+output_file.split('/')[-1]
-    if not os.path.exists(edge_outpath):
-        os.makedirs(edge_outpath)         
+#     edge_outpath = '/'.join(output_file.split('/')[:-1])+'2/'+output_file.split('/')[-1]
+#     if not os.path.exists(edge_outpath):
+#         os.makedirs(edge_outpath)         
     binary = results[0].mask*255
     kernel = np.ones((3,3), np.uint8) 
     erode = cv2.erode(binary, kernel)
     edge = binary - erode
-    cv2.imwrite(edge_outpath, edge)
+#     cv2.imwrite(edge_outpath, edge)
     
-    viz = np.concatenate((img, final), axis=1)
+    viz = np.concatenate((img, final, edge), axis=1)
     cv2.imwrite(output_file, viz)
     logger.info("Inference output for {} written to output.png".format(output_file))
 #     tpviz.interactive_imshow(viz)
