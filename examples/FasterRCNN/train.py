@@ -35,6 +35,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', help="A list of KEY=VALUE to overwrite those defined in config.py", nargs='+')
 
     args = parser.parse_args()
+    print('args: ', args)
     if args.config:
         print('args.config: ', args.config)
         cfg.update_args(args.config)
