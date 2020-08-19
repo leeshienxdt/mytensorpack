@@ -36,6 +36,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     if args.config:
+        print('args.config: ', args.config)
         cfg.update_args(args.config)
     register_coco(cfg.DATA.BASEDIR)  # add COCO datasets to the registry
     register_ic(cfg.DATA.BASEDIR)  # add the demo balloon datasets to the registry
