@@ -46,7 +46,7 @@ class ICDemo(DatasetSplit):
             with open(json_file) as f:
                 obj = json.load(f)
 
-            fname = fn.split('.')[0] + '.' + obj["imagePath"].split('.')[-1] #image filename
+            fname = [filename for filename in imgfiles if fn.split('.')[0] in filename][0] #image filename
             fname = os.path.join(self.imgdir, fname)
 
             roidb = {"file_name": fname}
