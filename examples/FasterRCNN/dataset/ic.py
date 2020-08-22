@@ -39,6 +39,7 @@ class ICDemo(DatasetSplit):
     def training_roidbs(self):
         files = [f for f in os.listdir(self.imgdir) if os.path.isfile(os.path.join(self.imgdir, f))]
         jsonfiles = [f for f in files if f.endswith('.json')]
+        imgfiles = [f for f in files if f.endswith('.jpeg') or f.endswith('.jpg')]
 
         ret = []
         for fn in jsonfiles:
