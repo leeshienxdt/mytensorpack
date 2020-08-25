@@ -105,8 +105,8 @@ def do_predict(pred_func, input_file, output_file):
 #     if not os.path.exists(edge_outpath):
 #         os.makedirs(edge_outpath)         
     binary = results[0].mask*255
-    kernel = np.ones((3,3), np.uint8) 
-    erode = cv2.erode(binary, kernel)
+    dilate = cv2.dilate(binary, np.ones((7,7), np.uint8))
+    erode = cv2.erode(dilate, np.ones((9,9), np.uint8))
     edge = binary - erode
     idx_r, idx_c = np.where(edge==255)
     idx1 = np.stack((idx_r, idx_c), axis=1)
