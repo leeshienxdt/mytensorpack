@@ -94,6 +94,7 @@ def do_evaluate(pred_config, output_file):
 
 
 def do_predict(pred_func, input_file, output_file):
+    print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
     results = predict_image(img, pred_func)
     if cfg.MODE_MASK:
