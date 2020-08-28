@@ -105,8 +105,8 @@ def do_predict(pred_func, input_file, output_file):
 #     edge_outpath = '/'.join(output_file.split('/')[:-1])+'2/'+output_file.split('/')[-1]
 #     if not os.path.exists(edge_outpath):
 #         os.makedirs(edge_outpath)    
-    if input_file.split('/')[-1] ==  'IMG_0562.JPG':
-        print('IMG_0562.JPG: ', results)
+    if input_file.split('/')[-1] ==  'Light Surface Long Shot (2).jpg':
+        print(' results: ', results)
     binary = results[0].mask*255
     dilate = cv2.dilate(binary, np.ones((7,7), np.uint8))
     erode = cv2.erode(dilate, np.ones((9,9), np.uint8))
