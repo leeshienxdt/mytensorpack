@@ -79,7 +79,7 @@ class ModelSaver(Callback):
                 self.path,
                 global_step=tf.train.get_global_step(),
                 write_meta_graph=False)
-            tf.train.write_graph(tf.get_default_session(), self.path, 'frcnn_model.pb', as_text=False)
+#             tf.train.write_graph(tf.get_default_session(), self.path, 'frcnn_model.pb', as_text=False)
             logger.info("Model saved to %s." % tf.train.get_checkpoint_state(self.checkpoint_dir).model_checkpoint_path)
         except (IOError, tf.errors.PermissionDeniedError,
                 tf.errors.ResourceExhaustedError):   # disk error sometimes.. just ignore it
@@ -142,6 +142,7 @@ class MinSaver(Callback):
 
     def _save(self):
         ckpt = tf.train.get_checkpoint_state(self.checkpoint_dir)
+        print('ckpt: ', vars(ckpt))
         if ckpt is None:
             raise RuntimeError(
                 "[MinSaver] Cannot find a checkpoint state. Do you forget to use ModelSaver?")
