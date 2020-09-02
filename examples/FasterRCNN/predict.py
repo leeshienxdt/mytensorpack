@@ -185,7 +185,7 @@ if __name__ == '__main__':
             if not os.path.exists(outpath):
                 os.makedirs(outpath)            
             files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
-            imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png')]
+            imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
             for i,image_file in enumerate(imgfiles):
                 do_predict(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
