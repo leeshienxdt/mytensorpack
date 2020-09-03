@@ -300,6 +300,17 @@ def SmartInit(obj, *, ignore_mismatch=False):
             # Assume to be a TF checkpoint.
             # A TF checkpoint must be a prefix of an actual file.
             return (SaverRestoreRelaxed if ignore_mismatch else SaverRestore)(obj)
+        elif obj.endswith(".pb"):
+            print('Loading model...')
+            self.graph = tf.Graph()
+
+            with tf.gfile.GFile(model_filepath, 'rb') as f:       
+                graph_def = tf.GraphDef()
+                graph_def.ParseFromString(f.read())
+            print('Check out the input placeholders:')
+            nodes = [n.name + ' => ' +  n.op for n in graph_def.node if n.op in ('Placeholder')]
+            for node in nodes:
+                print(node)                      
         else:
             raise ValueError("Invalid argument to SmartInit: " + obj)
 
