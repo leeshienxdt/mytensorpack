@@ -144,6 +144,6 @@ class ModelExporter(object):
 
             builder.add_meta_graph_and_variables(
                 sess, list(tags),
-                signature_def_map={signature_name: prediction_signature})
+                signature_def_map={signature_name: prediction_signature}, clear_devices=True)
             builder.save()
             logger.info("SavedModel created at {}.".format(filename))
