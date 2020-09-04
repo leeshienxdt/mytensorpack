@@ -135,21 +135,21 @@ def predict_image(img):
             tf.import_graph_def(output_graph_def, name="")
             config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
             print('config: ', config)
-            with tf.compat.v1.Session(config=config) as sess:
-                print('-----------------------------------------------------------------------')
-                sess.run(tf.compat.v1.global_variables_initializer())
+            sess = tf.compat.v1.Session(config=config)
+    print('-----------------------------------------------------------------------')
+    sess.run(tf.compat.v1.global_variables_initializer())
 
-                input_image_tensor = sess.graph.get_tensor_by_name("image:0")
-                output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
-                output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
-                output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
-                output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")  
-                
-                boxes = sess.run(output_tensor_boxes, feed_dict={input_image_tensor: resized_img})
-                probs = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
-                labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
-                masks = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
-                print('masks: ', type(masks), len(masks), masks.shape)
+    input_image_tensor = sess.graph.get_tensor_by_name("image:0")
+    output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
+    output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
+    output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
+    output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")  
+
+    boxes = sess.run(output_tensor_boxes, feed_dict={input_image_tensor: resized_img})
+    probs = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
+    labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
+    masks = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
+    print('masks: ', type(masks), len(masks), masks.shape)
     #====================================================================================
 
     # Some slow numpy postprocessing:
