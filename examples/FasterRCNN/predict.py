@@ -173,8 +173,8 @@ if __name__ == '__main__':
             session_init=SmartInit(args.load),
             input_names=MODEL.get_inference_tensor_names()[0],
             output_names=MODEL.get_inference_tensor_names()[1])
-        print('input_names: ', input_names)
-        print('output_names: ', output_names)
+        print('input_names: ', MODEL.get_inference_tensor_names()[0])
+        print('output_names: ', MODEL.get_inference_tensor_names()[1])
 
         if args.output_pb:
             ModelExporter(predcfg).export_compact(args.output_pb, optimize=False)
