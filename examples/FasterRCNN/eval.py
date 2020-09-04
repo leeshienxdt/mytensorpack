@@ -68,6 +68,7 @@ def _paste_mask(box, mask, shape):
         A uint8 binary image of hxw.
     """
     assert mask.shape[0] == mask.shape[1], mask.shape
+    print('mask: ', mask.shape)
 
     if cfg.MRCNN.ACCURATE_PASTE:
         # This method is accurate but much slower.
