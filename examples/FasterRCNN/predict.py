@@ -93,10 +93,10 @@ def do_evaluate(pred_config, output_file):
         DatasetRegistry.get(dataset).eval_inference_results(all_results, output)
 
 
-def do_predict(pred_func, input_file, output_file):
+def do_predict(input_file, output_file):
     print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
-    results = predict_image(img, pred_func)
+    results = predict_image(img)
     if cfg.MODE_MASK:
         final = draw_final_outputs_blackwhite(img, results)
     else:
@@ -168,13 +168,14 @@ if __name__ == '__main__':
     if args.visualize:
         do_visualize(MODEL, args.load)
     else:
-        predcfg = PredictConfig(
-            model=MODEL,
-            session_init=SmartInit(args.load),
-            input_names=MODEL.get_inference_tensor_names()[0],
-            output_names=MODEL.get_inference_tensor_names()[1])
+#         predcfg = PredictConfig(
+#             model=MODEL,
+#             session_init=SmartInit(args.load),
+#             input_names=MODEL.get_inference_tensor_names()[0],
+#             output_names=MODEL.get_inference_tensor_names()[1])
         print('input_names: ', MODEL.get_inference_tensor_names()[0])
         print('output_names: ', MODEL.get_inference_tensor_names()[1])
+                
 
         if args.output_pb:
             ModelExporter(predcfg).export_compact(args.output_pb, optimize=False)
@@ -182,14 +183,20 @@ if __name__ == '__main__':
             ModelExporter(predcfg).export_serving(args.output_serving)
 
         if args.predict:
-            predictor = OfflinePredictor(predcfg)
+#             predictor = OfflinePredictor(predcfg)
+#             input_image_tensor = sess.graph.get_tensor_by_name("image:0")
+#             output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
+#             output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
+#             output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
+#             output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")
+            
             outpath = args.output_inference
             if not os.path.exists(outpath):
                 os.makedirs(outpath)            
             files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
             imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
-            for i,image_file in enumerate(imgfiles):
-                do_predict(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)  
+            for i,image_file in enumerate(imgfiles):             
+                do_predict(os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
             assert args.evaluate.endswith('.json'), args.evaluate
             do_evaluate(predcfg, args.evaluate)
