@@ -158,7 +158,7 @@ def predict_image(img):
     boxes = clip_boxes(boxes, orig_shape)
     if masks.size!=0:
         full_masks = [_paste_mask(box, mask, orig_shape)
-                      for box, mask in zip(boxes, masks[0])]
+                      for box, mask in zip(boxes, masks)]
         masks = full_masks
     else:
         # fill with none
