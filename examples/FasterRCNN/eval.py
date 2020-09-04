@@ -128,14 +128,22 @@ def predict_image(img):
 #     boxes, probs, labels, *masks = model_func(resized_img)
     #================================== testing part =================================
     pb_path = '/data/leeshien/pb test/SPE500_LR10000_v2.pb'
-    with tf.Graph().as_default():
-        output_graph_def = tf.compat.v1.GraphDef()
-        with open(pb_path, "rb") as f:
-            output_graph_def.ParseFromString(f.read())
-            tf.import_graph_def(output_graph_def, name="")
-            config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
-            print('config: ', config)
-            sess = tf.compat.v1.Session(config=config)
+#     with tf.Graph().as_default():
+#         output_graph_def = tf.compat.v1.GraphDef()
+#         with open(pb_path, "rb") as f:
+#             output_graph_def.ParseFromString(f.read())
+#             tf.import_graph_def(output_graph_def, name="")
+#             config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
+#             print('config: ', config)
+#             sess = tf.compat.v1.Session(config=config)
+    g = tf.Graph().as_default()
+    output_graph_def = tf.compat.v1.GraphDef()
+    with open(pb_path, "rb") as f:
+        output_graph_def.ParseFromString(f.read()) 
+    tf.import_graph_def(output_graph_def, name="")
+    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
+    print('config: ', config)
+    sess = tf.compat.v1.Session(config=config)        
     print('-----------------------------------------------------------------------')
     sess.run(tf.compat.v1.global_variables_initializer())
 
