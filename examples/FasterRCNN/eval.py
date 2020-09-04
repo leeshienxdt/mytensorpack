@@ -125,6 +125,7 @@ def predict_image(img):
     scale = np.sqrt(resized_img.shape[0] * 1.0 / img.shape[0] * resized_img.shape[1] / img.shape[1])
 #     boxes, probs, labels, *masks = model_func(resized_img)
     #================================== testing part =================================
+    pb_path = '/data/leeshien/pb test/SPE500_LR10000_v2.pb'
     with tf.Graph().as_default():
         output_graph_def = tf.compat.v1.GraphDef()
         with open(pb_path, "rb") as f:
@@ -135,7 +136,6 @@ def predict_image(img):
             with tf.compat.v1.Session(config=config) as sess:
                 print('-----------------------------------------------------------------------')
                 sess.run(tf.compat.v1.global_variables_initializer())
-                ops = sess.graph.get_operations()
 
                 input_image_tensor = sess.graph.get_tensor_by_name("image:0")
                 output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
