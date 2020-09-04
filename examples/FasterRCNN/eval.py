@@ -146,7 +146,7 @@ def predict_image(img):
                 boxes = sess.run(output_tensor_boxes, feed_dict={input_image_tensor: resized_img})
                 scores = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
                 labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
-                mask = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
+                masks = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
     #====================================================================================
 
     # Some slow numpy postprocessing:
