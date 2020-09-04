@@ -106,7 +106,7 @@ def _paste_mask(box, mask, shape):
         return ret
 
 
-def predict_image(img, model_func):
+def predict_image(img):
     """
     Run detection on one image, using the TF callable.
     This function should handle the preprocessing internally.
@@ -123,7 +123,31 @@ def predict_image(img, model_func):
     resizer = CustomResize(cfg.PREPROC.TEST_SHORT_EDGE_SIZE, cfg.PREPROC.MAX_SIZE)
     resized_img = resizer.augment(img)
     scale = np.sqrt(resized_img.shape[0] * 1.0 / img.shape[0] * resized_img.shape[1] / img.shape[1])
-    boxes, probs, labels, *masks = model_func(resized_img)
+#     boxes, probs, labels, *masks = model_func(resized_img)
+    #================================== testing part =================================
+    with tf.Graph().as_default():
+        output_graph_def = tf.compat.v1.GraphDef()
+        with open(pb_path, "rb") as f:
+            output_graph_def.ParseFromString(f.read())
+            tf.import_graph_def(output_graph_def, name="")
+            config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
+            print('config: ', config)
+            with tf.compat.v1.Session(config=config) as sess:
+                print('-----------------------------------------------------------------------')
+                sess.run(tf.compat.v1.global_variables_initializer())
+                ops = sess.graph.get_operations()
+
+                input_image_tensor = sess.graph.get_tensor_by_name("image:0")
+                output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
+                output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
+                output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
+                output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")  
+                
+                boxes = sess.run(output_tensor_boxes, feed_dict={input_image_tensor: resized_img})
+                scores = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
+                labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
+                mask = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
+    #====================================================================================
 
     # Some slow numpy postprocessing:
     boxes = boxes / scale
