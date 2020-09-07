@@ -93,7 +93,7 @@ def do_evaluate(pred_config, output_file):
         DatasetRegistry.get(dataset).eval_inference_results(all_results, output)
 
 
-def do_predict(input_file, output_file):
+def do_predict(pb_path, input_file, output_file):
     g = tf.Graph().as_default()
     output_graph_def = tf.compat.v1.GraphDef()
     with open(pb_path, "rb") as f:
@@ -199,7 +199,7 @@ if __name__ == '__main__':
             files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
             imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
             for i,image_file in enumerate(imgfiles):             
-                do_predict(os.path.join(args.predict[0], image_file), outpath+image_file)  
+                do_predict(args.load, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
             assert args.evaluate.endswith('.json'), args.evaluate
             do_evaluate(predcfg, args.evaluate)
