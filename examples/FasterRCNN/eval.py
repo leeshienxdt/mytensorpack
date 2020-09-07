@@ -155,7 +155,7 @@ def predict_image(sess, input_tensor, output_tensors, img):
 #     probs = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
 #     labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
 #     masks = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
-    boxes, probs, labels, masks = sess.run([output_tensors], feed_dict={input_tensor: resized_img})
+    boxes, probs, labels, masks = sess.run(output_tensors, feed_dict={input_tensor: resized_img})
 
     # Some slow numpy postprocessing:
     boxes = boxes / scale
