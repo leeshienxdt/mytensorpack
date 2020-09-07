@@ -101,12 +101,6 @@ def do_predict(input_file, output_file):
         final = draw_final_outputs_blackwhite(img, results)
     else:
         final = draw_final_outputs(img, results)
-
-#     edge_outpath = '/'.join(output_file.split('/')[:-1])+'2/'+output_file.split('/')[-1]
-#     if not os.path.exists(edge_outpath):
-#         os.makedirs(edge_outpath)    
-    if input_file.split('/')[-1] ==  'Light Surface Long Shot (2).jpg':
-        print(' results: ', results)
         
     if results:
         binary = results[0].mask*255
@@ -116,14 +110,7 @@ def do_predict(input_file, output_file):
         idx_r, idx_c = np.where(edge==255)
         idx1 = np.stack((idx_r, idx_c), axis=1)
         edge3d = np.zeros((edge.shape[0], edge.shape[1], 3))
-        print('results[0].mask*255.shape: ', (results[0].mask*255).shape)
-        print('idx1: ', idx1)
-        print('edge.shape: ', edge.shape)
-        print('edge3d.shape A: ', edge3d.shape)
         edge3d[list(idx1.T)] = 255
-        print('edge3d.shape B: ', edge3d.shape)
-    #     cv2.imwrite(edge_outpath, edge)
-
         viz = np.concatenate((img, final, edge3d), axis=1)
     else:
         viz = img
