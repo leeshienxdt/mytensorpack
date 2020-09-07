@@ -153,10 +153,11 @@ def predict_image(img):
     output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
     output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")  
 
-    boxes = sess.run(output_tensor_boxes, feed_dict={input_image_tensor: resized_img})
-    probs = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
-    labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
-    masks = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
+#     boxes = sess.run(output_tensor_boxes, feed_dict={input_image_tensor: resized_img})
+#     probs = sess.run(output_tensor_scores, feed_dict={input_image_tensor: resized_img})
+#     labels = sess.run(output_tensor_labels, feed_dict={input_image_tensor: resized_img})
+#     masks = sess.run(output_tensor_masks, feed_dict={input_image_tensor: resized_img})
+    boxes, probs, labels, masks = sess.run([output_tensor_boxes, output_tensor_scores, output_tensor_labels, output_tensor_masks], feed_dict={input_image_tensor: resized_img})
     print('masks: ', type(masks), len(masks), masks.shape)
     #====================================================================================
 
