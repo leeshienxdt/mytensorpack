@@ -24,6 +24,7 @@ from modeling.generalized_rcnn import ResNetC4Model, ResNetFPNModel
 from viz import (
     draw_annotation, draw_final_outputs, draw_predictions,
     draw_proposal_recall, draw_final_outputs_blackwhite)
+from load import load_session
 
 
 def do_visualize(model, model_path, nr_visualize=100, output_dir='output'):
@@ -93,22 +94,8 @@ def do_evaluate(pred_config, output_file):
         DatasetRegistry.get(dataset).eval_inference_results(all_results, output)
 
 
-def do_predict(pb_path, input_file, output_file):
-    g = tf.Graph().as_default()
-    output_graph_def = tf.compat.v1.GraphDef()
-    with open(pb_path, "rb") as f:
-        output_graph_def.ParseFromString(f.read()) 
-    tf.import_graph_def(output_graph_def, name="")
-    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
-    sess = tf.compat.v1.Session(config=config)        
-    sess.run(tf.compat.v1.global_variables_initializer())
+def do_predict(sess, input_tensor, output_tensors, input_file, output_file):
 
-    input_tensor = sess.graph.get_tensor_by_name("image:0")
-    output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
-    output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
-    output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
-    output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")   
-    output_tensors = [output_tensor_boxes, output_tensor_scores, output_tensor_labels, output_tensor_masks]
     
     print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
@@ -186,12 +173,24 @@ if __name__ == '__main__':
             ModelExporter(predcfg).export_serving(args.output_serving)
 
         if args.predict:
-#             predictor = OfflinePredictor(predcfg)
-#             input_image_tensor = sess.graph.get_tensor_by_name("image:0")
+# #             predictor = OfflinePredictor(predcfg)
+#             g = tf.Graph().as_default()
+#             output_graph_def = tf.compat.v1.GraphDef()
+#             with open(args.load, "rb") as f:
+#                 output_graph_def.ParseFromString(f.read()) 
+#             tf.import_graph_def(output_graph_def, name="")
+#             config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
+#             sess = tf.compat.v1.Session(config=config)        
+#             sess.run(tf.compat.v1.global_variables_initializer())
+
+#             input_tensor = sess.graph.get_tensor_by_name("image:0")
 #             output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
 #             output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
 #             output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
-#             output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")
+#             output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")   
+#             output_tensors = [output_tensor_boxes, output_tensor_scores, output_tensor_labels, output_tensor_masks] 
+            
+            sess, input_tensor, output_tensors = load_session(args.load)
             
             outpath = args.output_inference
             if not os.path.exists(outpath):
@@ -199,7 +198,7 @@ if __name__ == '__main__':
             files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
             imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
             for i,image_file in enumerate(imgfiles):             
-                do_predict(args.load, os.path.join(args.predict[0], image_file), outpath+image_file)  
+                do_predict(sess, input_tensor, output_tensors, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
             assert args.evaluate.endswith('.json'), args.evaluate
             do_evaluate(predcfg, args.evaluate)
