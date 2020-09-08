@@ -159,11 +159,11 @@ if __name__ == '__main__':
     if args.visualize:
         do_visualize(MODEL, args.load)
     else:
-#         predcfg = PredictConfig(
-#             model=MODEL,
-#             session_init=SmartInit(args.load),
-#             input_names=MODEL.get_inference_tensor_names()[0],
-#             output_names=MODEL.get_inference_tensor_names()[1])
+        predcfg = PredictConfig(
+            model=MODEL,
+            session_init=SmartInit(args.load),
+            input_names=MODEL.get_inference_tensor_names()[0],
+            output_names=MODEL.get_inference_tensor_names()[1])
         print('input_names: ', MODEL.get_inference_tensor_names()[0])
         print('output_names: ', MODEL.get_inference_tensor_names()[1])
                 
