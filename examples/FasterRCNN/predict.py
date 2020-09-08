@@ -122,6 +122,17 @@ def do_predict(sess, input_tensor, output_tensors, input_file, output_file):
     logger.info("Inference output for {} written to output.png".format(output_file))
 #     tpviz.interactive_imshow(viz)
 
+def do_predict2(pred_func, input_file):
+    img = cv2.imread(input_file, cv2.IMREAD_COLOR)
+    results = predict_image(img, pred_func)
+    if cfg.MODE_MASK:
+        final = draw_final_outputs_blackwhite(img, results)
+    else:
+        final = draw_final_outputs(img, results)
+    viz = np.concatenate((img, final), axis=1)
+    cv2.imwrite("output.png", viz)
+    logger.info("Inference output for {} written to output.png".format(input_file))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -174,7 +185,7 @@ if __name__ == '__main__':
             ModelExporter(predcfg).export_serving(args.output_serving)
 
         if args.predict:
-# #             predictor = OfflinePredictor(predcfg)
+            predictor = OfflinePredictor(predcfg)
 #             g = tf.Graph().as_default()
 #             output_graph_def = tf.compat.v1.GraphDef()
 #             with open(args.load, "rb") as f:
@@ -191,15 +202,16 @@ if __name__ == '__main__':
 #             output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")   
 #             output_tensors = [output_tensor_boxes, output_tensor_scores, output_tensor_labels, output_tensor_masks] 
             
-            sess, input_tensor, output_tensors = load_session(args.load)
+#             sess, input_tensor, output_tensors = load_session(args.load)
             
             outpath = args.output_inference
             if not os.path.exists(outpath):
                 os.makedirs(outpath)            
             files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
             imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
-            for i,image_file in enumerate(imgfiles):             
-                do_predict(sess, input_tensor, output_tensors, os.path.join(args.predict[0], image_file), outpath+image_file)  
+            for i,image_file in enumerate(imgfiles): 
+                do_predict2(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)  
+#                 do_predict(sess, input_tensor, output_tensors, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
             assert args.evaluate.endswith('.json'), args.evaluate
             do_evaluate(predcfg, args.evaluate)
