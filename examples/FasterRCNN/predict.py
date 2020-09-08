@@ -26,6 +26,7 @@ from viz import (
     draw_proposal_recall, draw_final_outputs_blackwhite)
 from load import load_session
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
 def do_visualize(model, model_path, nr_visualize=100, output_dir='output'):
     """
