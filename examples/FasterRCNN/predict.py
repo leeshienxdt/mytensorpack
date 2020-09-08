@@ -146,10 +146,10 @@ if __name__ == '__main__':
 
     MODEL = ResNetFPNModel() if cfg.MODE_FPN else ResNetC4Model()
 
-    if not tf.test.is_gpu_available():
-        from tensorflow.python.framework import test_util
-        assert get_tf_version_tuple() >= (1, 7) and test_util.IsMklEnabled(), \
-            "Inference requires either GPU support or MKL support!"
+#     if not tf.test.is_gpu_available():
+#         from tensorflow.python.framework import test_util
+#         assert get_tf_version_tuple() >= (1, 7) and test_util.IsMklEnabled(), \
+#             "Inference requires either GPU support or MKL support!"
     assert args.load
     finalize_configs(is_training=False)
 
