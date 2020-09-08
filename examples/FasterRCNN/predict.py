@@ -202,7 +202,7 @@ if __name__ == '__main__':
 #             output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")   
 #             output_tensors = [output_tensor_boxes, output_tensor_scores, output_tensor_labels, output_tensor_masks] 
             
-#             sess, input_tensor, output_tensors = load_session(args.load)
+            sess, input_tensor, output_tensors = load_session(args.load)
             
             outpath = args.output_inference
             if not os.path.exists(outpath):
