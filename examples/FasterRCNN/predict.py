@@ -26,8 +26,6 @@ from viz import (
     draw_proposal_recall, draw_final_outputs_blackwhite)
 from load import load_session
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-
 def do_visualize(model, model_path, nr_visualize=100, output_dir='output'):
     """
     Visualize some intermediate results (proposals, raw predictions) inside the pipeline.
@@ -163,6 +161,8 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', help='whether to inference using GPU', default=True, type=bool)
 
     args = parser.parse_args()
+    if args.gpu==False:
+        os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
     if args.config:
         cfg.update_args(args.config)
     register_coco(cfg.DATA.BASEDIR)  # add COCO datasets to the registry
