@@ -14,10 +14,10 @@ if __name__ == '__main__':
 	parser.add_argument('--output-pb', help='Save a model to .pb')
 
 	args = parser.parse_args()
-	    if args.config:
+	if args.config:
 		cfg.update_args(args.config)
-	    register_coco(cfg.DATA.BASEDIR)  # add COCO datasets to the registry
-	    register_ic(cfg.DATA.BASEDIR)	
+	register_coco(cfg.DATA.BASEDIR)  # add COCO datasets to the registry
+	register_ic(cfg.DATA.BASEDIR)	
 
 	cfg.TEST.RESULT_SCORE_THRESH = cfg.TEST.RESULT_SCORE_THRESH_VIS
 
