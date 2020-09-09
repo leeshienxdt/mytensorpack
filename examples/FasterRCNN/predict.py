@@ -160,6 +160,7 @@ if __name__ == '__main__':
     parser.add_argument('--output-pb', help='Save a model to .pb')
     parser.add_argument('--output-serving', help='Save a model to serving file')
     parser.add_argument('--output-inference', help='Path to save inference results')
+    parser.add_argument('--gpu', help='whether to inference using GPU', default=True, type=bool)
 
     args = parser.parse_args()
     if args.config:
