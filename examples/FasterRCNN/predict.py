@@ -19,7 +19,7 @@ from dataset import DatasetRegistry, register_coco, register_ic
 from config import config as cfg
 from config import finalize_configs
 from data import get_eval_dataflow, get_train_dataflow
-from eval import DetectionResult, multithread_predict_dataflow, predict_image
+from eval import DetectionResult, multithread_predict_dataflow, predict_image_ckpt, predict_image_pb
 from modeling.generalized_rcnn import ResNetC4Model, ResNetFPNModel
 from viz import (
     draw_annotation, draw_final_outputs, draw_predictions,
@@ -98,7 +98,7 @@ def do_evaluate(pred_config, output_file):
 def do_predict_pb(sess, input_tensor, output_tensors, input_file, output_file):
     print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
-    results = predict_image(sess, input_tensor, output_tensors, img)
+    results = predict_image_pb(sess, input_tensor, output_tensors, img)
     if cfg.MODE_MASK:
         final = draw_final_outputs_blackwhite(img, results)
     else:
@@ -123,7 +123,7 @@ def do_predict_pb(sess, input_tensor, output_tensors, input_file, output_file):
 def do_predict_ckpt(pred_func, input_file, output_file):
     print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
-    results = predict_image(img, pred_func)
+    results = predict_image_ckpt(img, pred_func)
     if cfg.MODE_MASK:
         final = draw_final_outputs_blackwhite(img, results)
     else:
