@@ -12,6 +12,8 @@ if __name__ == '__main__':
 	parser.add_argument('--load', help='load a model for evaluation.', required=True)
 	parser.add_argument('--output-pb', help='Save a model to .pb')
 	args = parser.parse_args()
+	
+	cfg.TEST.RESULT_SCORE_THRESH = cfg.TEST.RESULT_SCORE_THRESH_VIS
 
 	MODEL = ResNetFPNModel() if cfg.MODE_FPN else ResNetC4Model()
 
