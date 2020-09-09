@@ -1,6 +1,7 @@
 import argparse
 
 from config import config as cfg
+from dataset import DatasetRegistry, register_coco, register_ic
 from modeling.generalized_rcnn import ResNetC4Model, ResNetFPNModel
 
 from tensorpack.predict import PredictConfig
