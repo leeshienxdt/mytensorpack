@@ -1,5 +1,6 @@
 import argparse
 
+from config import config as cfg
 from modeling.generalized_rcnn import ResNetC4Model, ResNetFPNModel
 from tensorpack.predict import PredictConfig
 
