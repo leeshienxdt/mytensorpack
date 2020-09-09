@@ -198,22 +198,17 @@ if __name__ == '__main__':
             ModelExporter(predcfg).export_serving(args.output_serving)
 
         if args.predict:
+            outpath = args.output_inference
+            if not os.path.exists(outpath):
+                os.makedirs(outpath)            
+            files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
+            imgfiles = [f for f in files if f.lower().endswith('.jpg') or f.lower().endswith('.jpeg') or f.lower().endswith('.png')]            
             if args.load_ckpt:
                 predictor = OfflinePredictor(predcfg)
-                outpath = args.output_inference
-                if not os.path.exists(outpath):
-                    os.makedirs(outpath)            
-                files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
-                imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
                 for i,image_file in enumerate(imgfiles): 
                     do_predict_ckpt(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)                  
             else:
                 sess, input_tensor, output_tensors = load_session(args.load_pb)
-                outpath = args.output_inference
-                if not os.path.exists(outpath):
-                    os.makedirs(outpath)            
-                files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
-                imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
                 for i,image_file in enumerate(imgfiles): 
                     do_predict_pb(sess, input_tensor, output_tensors, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
