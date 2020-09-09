@@ -95,7 +95,7 @@ def do_evaluate(pred_config, output_file):
         DatasetRegistry.get(dataset).eval_inference_results(all_results, output)
 
 
-def do_predict(sess, input_tensor, output_tensors, input_file, output_file):
+def do_predict_pb(sess, input_tensor, output_tensors, input_file, output_file):
 
     
     print('input fn: ', input_file)
@@ -122,7 +122,7 @@ def do_predict(sess, input_tensor, output_tensors, input_file, output_file):
     logger.info("Inference output for {} written to output.png".format(output_file))
 #     tpviz.interactive_imshow(viz)
 
-def do_predict2(pred_func, input_file):
+def do_predict_ckpt(pred_func, input_file):
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
     results = predict_image(img, pred_func)
     if cfg.MODE_MASK:
@@ -136,7 +136,8 @@ def do_predict2(pred_func, input_file):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--load', help='load a model for evaluation.', required=True)
+    parser.add_argument('--load-ckpt', help='load a checkpoint model for evaluation.')
+    parser.add_argument('--load-pb', help='load a pb model for evaluation.')
     parser.add_argument('--visualize', action='store_true', help='visualize intermediate results')
     parser.add_argument('--evaluate', help="Run evaluation. "
                                            "This argument is the path to the output json evaluation file")
@@ -161,7 +162,7 @@ if __name__ == '__main__':
 #         from tensorflow.python.framework import test_util
 #         assert get_tf_version_tuple() >= (1, 7) and test_util.IsMklEnabled(), \
 #             "Inference requires either GPU support or MKL support!"
-    assert args.load
+    assert args.load_ckpt or args.load_pb
     finalize_configs(is_training=False)
 
     if args.predict or args.visualize:
@@ -170,13 +171,14 @@ if __name__ == '__main__':
     if args.visualize:
         do_visualize(MODEL, args.load)
     else:
-        predcfg = PredictConfig(
-            model=MODEL,
-            session_init=SmartInit(args.load),
-            input_names=MODEL.get_inference_tensor_names()[0],
-            output_names=MODEL.get_inference_tensor_names()[1])
-        print('input_names: ', MODEL.get_inference_tensor_names()[0])
-        print('output_names: ', MODEL.get_inference_tensor_names()[1])
+        if args.load_ckpt:
+            predcfg = PredictConfig(
+                model=MODEL,
+                session_init=SmartInit(args.load_ckpt),
+                input_names=MODEL.get_inference_tensor_names()[0],
+                output_names=MODEL.get_inference_tensor_names()[1])
+            print('input_names: ', MODEL.get_inference_tensor_names()[0])
+            print('output_names: ', MODEL.get_inference_tensor_names()[1])
                 
 
         if args.output_pb:
@@ -185,33 +187,24 @@ if __name__ == '__main__':
             ModelExporter(predcfg).export_serving(args.output_serving)
 
         if args.predict:
-#             predictor = OfflinePredictor(predcfg)
-#             g = tf.Graph().as_default()
-#             output_graph_def = tf.compat.v1.GraphDef()
-#             with open(args.load, "rb") as f:
-#                 output_graph_def.ParseFromString(f.read()) 
-#             tf.import_graph_def(output_graph_def, name="")
-#             config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
-#             sess = tf.compat.v1.Session(config=config)        
-#             sess.run(tf.compat.v1.global_variables_initializer())
-
-#             input_tensor = sess.graph.get_tensor_by_name("image:0")
-#             output_tensor_boxes = sess.graph.get_tensor_by_name("output/boxes:0")
-#             output_tensor_scores = sess.graph.get_tensor_by_name("output/scores:0")
-#             output_tensor_labels = sess.graph.get_tensor_by_name("output/labels:0")
-#             output_tensor_masks = sess.graph.get_tensor_by_name("output/masks:0")   
-#             output_tensors = [output_tensor_boxes, output_tensor_scores, output_tensor_labels, output_tensor_masks] 
-            
-            sess, input_tensor, output_tensors = load_session(args.load)
-            
-            outpath = args.output_inference
-            if not os.path.exists(outpath):
-                os.makedirs(outpath)            
-            files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
-            imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
-            for i,image_file in enumerate(imgfiles): 
-#                 do_predict2(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)  
-                do_predict(sess, input_tensor, output_tensors, os.path.join(args.predict[0], image_file), outpath+image_file)  
+            if args.load_ckpt:
+                predictor = OfflinePredictor(predcfg)
+                outpath = args.output_inference
+                if not os.path.exists(outpath):
+                    os.makedirs(outpath)            
+                files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
+                imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
+                for i,image_file in enumerate(imgfiles): 
+                    do_predict_ckpt(predictor, os.path.join(args.predict[0], image_file), outpath+image_file)                  
+            else:
+                sess, input_tensor, output_tensors = load_session(args.load_pb)
+                outpath = args.output_inference
+                if not os.path.exists(outpath):
+                    os.makedirs(outpath)            
+                files = [f for f in os.listdir(args.predict[0]) if os.path.isfile(os.path.join(args.predict[0], f))]
+                imgfiles = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.JPG') or f.endswith('.JPEG') or f.endswith('.PNG') or f.endswith('.png') or f.endswith('.jfif')]
+                for i,image_file in enumerate(imgfiles): 
+                    do_predict_pb(sess, input_tensor, output_tensors, os.path.join(args.predict[0], image_file), outpath+image_file)  
         elif args.evaluate:
             assert args.evaluate.endswith('.json'), args.evaluate
             do_evaluate(predcfg, args.evaluate)
