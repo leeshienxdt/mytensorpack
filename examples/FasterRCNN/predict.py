@@ -96,8 +96,6 @@ def do_evaluate(pred_config, output_file):
 
 
 def do_predict_pb(sess, input_tensor, output_tensors, input_file, output_file):
-
-    
     print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
     results = predict_image(sess, input_tensor, output_tensors, img)
@@ -122,16 +120,29 @@ def do_predict_pb(sess, input_tensor, output_tensors, input_file, output_file):
     logger.info("Inference output for {} written to output.png".format(output_file))
 #     tpviz.interactive_imshow(viz)
 
-def do_predict_ckpt(pred_func, input_file):
+def do_predict_ckpt(pred_func, input_file, output_file):
+    print('input fn: ', input_file)
     img = cv2.imread(input_file, cv2.IMREAD_COLOR)
     results = predict_image(img, pred_func)
     if cfg.MODE_MASK:
         final = draw_final_outputs_blackwhite(img, results)
     else:
         final = draw_final_outputs(img, results)
-    viz = np.concatenate((img, final), axis=1)
-    cv2.imwrite("output.png", viz)
-    logger.info("Inference output for {} written to output.png".format(input_file))
+        
+    if results:
+        binary = results[0].mask*255
+        dilate = cv2.dilate(binary, np.ones((7,7), np.uint8))
+        erode = cv2.erode(dilate, np.ones((9,9), np.uint8))
+        edge = binary - erode
+        idx_r, idx_c = np.where(edge==255)
+        idx1 = np.stack((idx_r, idx_c), axis=1)
+        edge3d = np.zeros((edge.shape[0], edge.shape[1], 3))
+        edge3d[list(idx1.T)] = 255
+        viz = np.concatenate((img, final, edge3d), axis=1)
+    else:
+        viz = img
+    cv2.imwrite(output_file, viz)
+    logger.info("Inference output for {} written to output.png".format(output_file))
 
 
 if __name__ == '__main__':
