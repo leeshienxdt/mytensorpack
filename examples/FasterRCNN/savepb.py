@@ -2,7 +2,10 @@ import argparse
 
 from config import config as cfg
 from modeling.generalized_rcnn import ResNetC4Model, ResNetFPNModel
+
 from tensorpack.predict import PredictConfig
+from tensorpack.tfutils import SmartInit
+from tensorpack.tfutils.export import ModelExporter
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
